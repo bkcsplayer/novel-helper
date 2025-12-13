@@ -1,0 +1,425 @@
+/* BioWeaver Admin Panel - Memory Lane Theme */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root Variables */
+:root {
+  --color-parchment: #F7F3EE;
+  --color-paper: #FFFDF9;
+  --color-sepia: #8B5A2B;
+  --color-gold: #D4A373;
+  --color-cream: #FEFAE0;
+  --color-text: #2C2C2C;
+  --color-text-secondary: #5C5C5C;
+  --color-border: rgba(139, 90, 43, 0.12);
+  --color-success: #4A7C59;
+  --color-pending: #B8860B;
+  --color-error: #9B2335;
+  
+  --font-serif: 'Merriweather', 'Georgia', serif;
+  --font-sans: 'Inter', 'Segoe UI', sans-serif;
+  
+  --shadow-sm: 0 1px 3px rgba(139, 90, 43, 0.08);
+  --shadow-md: 0 4px 12px rgba(139, 90, 43, 0.1);
+  --shadow-lg: 0 8px 24px rgba(139, 90, 43, 0.12);
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-parchment);
+  color: var(--color-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(139, 90, 43, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 90, 43, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 90, 43, 0.35);
+}
+
+/* React-Admin Overrides */
+.RaLayout-root {
+  background: var(--color-parchment) !important;
+}
+
+.RaLayout-content {
+  background: var(--color-parchment) !important;
+  padding: 24px !important;
+}
+
+/* Sidebar Styling - Dark Warm Theme */
+.RaSidebar-fixed {
+  background: linear-gradient(180deg, #2C2420 0%, #1F1A17 100%) !important;
+}
+
+.RaMenuItemLink-root {
+  color: rgba(255, 253, 249, 0.85) !important;
+  border-radius: 10px !important;
+  margin: 4px 12px !important;
+  padding: 12px 16px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.RaMenuItemLink-root:hover {
+  background: rgba(212, 163, 115, 0.15) !important;
+  color: #FFFDF9 !important;
+}
+
+.RaMenuItemLink-active {
+  background: linear-gradient(135deg, rgba(212, 163, 115, 0.25) 0%, rgba(139, 90, 43, 0.2) 100%) !important;
+  color: #D4A373 !important;
+  border-left: 3px solid #D4A373 !important;
+  padding-left: 13px !important;
+}
+
+.RaMenuItemLink-icon {
+  color: inherit !important;
+  min-width: 36px !important;
+}
+
+/* AppBar */
+.RaAppBar-toolbar {
+  background: var(--color-paper) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.RaAppBar-title {
+  font-family: var(--font-serif) !important;
+  font-weight: 600 !important;
+  color: var(--color-sepia) !important;
+  font-size: 1.25rem !important;
+}
+
+/* Datagrid Styling */
+.RaDatagrid-root {
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow-sm) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.RaDatagrid-thead {
+  background: linear-gradient(180deg, #F5F1EB 0%, #EDE8E0 100%) !important;
+}
+
+.RaDatagrid-headerCell {
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+  font-size: 0.875rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  padding: 16px !important;
+  border-bottom: 2px solid var(--color-border) !important;
+}
+
+.RaDatagrid-row {
+  background: var(--color-paper) !important;
+  transition: all 0.15s ease !important;
+}
+
+.RaDatagrid-row:hover {
+  background: rgba(212, 163, 115, 0.08) !important;
+}
+
+.RaDatagrid-rowEven {
+  background: rgba(247, 243, 238, 0.5) !important;
+}
+
+.RaDatagrid-rowCell {
+  padding: 14px 16px !important;
+  border-bottom: 1px solid rgba(139, 90, 43, 0.06) !important;
+}
+
+/* Buttons */
+.RaButton-button {
+  border-radius: var(--radius-sm) !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.RaButton-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Forms */
+.RaSimpleForm-form {
+  padding: 24px !important;
+}
+
+.RaLabeled-label {
+  font-weight: 500 !important;
+  color: var(--color-text-secondary) !important;
+  font-size: 0.875rem !important;
+  margin-bottom: 6px !important;
+}
+
+/* Cards */
+.MuiCard-root {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: all 0.2s ease !important;
+}
+
+.MuiCard-root:hover {
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Status Chips */
+.status-polished {
+  background: linear-gradient(135deg, #4A7C59 0%, #3D6B4A 100%) !important;
+  color: white !important;
+}
+
+.status-pending {
+  background: linear-gradient(135deg, #B8860B 0%, #9A7209 100%) !important;
+  color: white !important;
+}
+
+.status-error {
+  background: linear-gradient(135deg, #9B2335 0%, #7D1C2A 100%) !important;
+  color: white !important;
+}
+
+/* Custom Animation Classes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    rgba(139, 90, 43, 0.08) 25%,
+    rgba(139, 90, 43, 0.15) 50%,
+    rgba(139, 90, 43, 0.08) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+  background: var(--color-paper);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(212, 163, 115, 0.3);
+}
+
+.dashboard-card-success {
+  border-left: 4px solid var(--color-success);
+}
+
+.dashboard-card-pending {
+  border-left: 4px solid var(--color-pending);
+}
+
+.dashboard-card-error {
+  border-left: 4px solid var(--color-error);
+}
+
+/* Status Indicator Dots */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.status-dot-success {
+  background: var(--color-success);
+  box-shadow: 0 0 8px rgba(74, 124, 89, 0.4);
+}
+
+.status-dot-pending {
+  background: var(--color-pending);
+  box-shadow: 0 0 8px rgba(184, 134, 11, 0.4);
+}
+
+.status-dot-error {
+  background: var(--color-error);
+  box-shadow: 0 0 8px rgba(155, 35, 53, 0.4);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Audio Player Styling */
+audio {
+  width: 100%;
+  max-width: 320px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #F5F1EB 0%, #EDE8E0 100%);
+}
+
+audio::-webkit-media-controls-panel {
+  background: linear-gradient(135deg, #F5F1EB 0%, #EDE8E0 100%);
+}
+
+/* Text Truncation Utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Logo/Brand Area in Sidebar */
+.sidebar-brand {
+  padding: 24px 16px;
+  border-bottom: 1px solid rgba(255, 253, 249, 0.08);
+  margin-bottom: 8px;
+}
+
+.sidebar-brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #D4A373;
+  letter-spacing: -0.02em;
+}
+
+.sidebar-brand-subtitle {
+  font-size: 0.75rem;
+  color: rgba(255, 253, 249, 0.5);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Show/Edit View Styling */
+.RaShow-main,
+.RaEdit-main {
+  background: var(--color-paper) !important;
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-sm) !important;
+  margin-top: 16px !important;
+}
+
+.RaSimpleShowLayout-stack {
+  padding: 24px !important;
+}
+
+/* Typography for content areas */
+.content-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.content-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+}
+
+/* Textarea styling for polished text */
+.polished-text-preview {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--color-text);
+  background: linear-gradient(180deg, var(--color-cream) 0%, #FDF9EC 100%);
+  padding: 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(212, 163, 115, 0.2);
+  white-space: pre-wrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .RaLayout-content {
+    padding: 16px !important;
+  }
+  
+  .dashboard-card {
+    padding: 16px;
+  }
+}

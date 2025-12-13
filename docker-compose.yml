@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: bioweaver-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - bioweaver-net
+
+  backend-api:
+    build: ./backend-api
+    container_name: bioweaver-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      WHISPER_MODEL: ${WHISPER_MODEL}
+      LLM_MODEL: ${LLM_MODEL}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+      STORAGE_AUDIO_PATH: ${STORAGE_AUDIO_PATH}
+      STORAGE_BOOK_PATH: ${STORAGE_BOOK_PATH}
+    depends_on:
+      - db
+    volumes:
+      - ./backend-api:/app
+      - ./storage/audio:${STORAGE_AUDIO_PATH}
+      - ./storage/books:${STORAGE_BOOK_PATH}
+    networks:
+      - bioweaver-net
+
+  frontend-mobile:
+    build: ./frontend-mobile
+    container_name: bioweaver-frontend
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - backend-api
+    networks:
+      - bioweaver-net
+
+  admin-panel:
+    build: ./admin-panel
+    container_name: bioweaver-admin
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - backend-api
+    networks:
+      - bioweaver-net
+
+  reverse-proxy:
+    image: nginx:alpine
+    container_name: bioweaver-proxy
+    restart: unless-stopped
+    depends_on:
+      - frontend-mobile
+      - admin-panel
+      - backend-api
+    ports:
+      - "${PORT_NGINX:-18080}:80"
+    volumes:
+      - ./reverse-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./storage:/data/storage:ro
+    networks:
+      - bioweaver-net
+
+networks:
+  bioweaver-net:
+    driver: bridge
+
+volumes:
+  pgdata:
