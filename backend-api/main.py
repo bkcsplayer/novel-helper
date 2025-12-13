@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List, Optional
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI, File, UploadFile, status, HTTPException, Request
+from fastapi import Depends, FastAPI, File, Form, UploadFile, status, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -135,10 +135,10 @@ async def list_chapters(user_id: Optional[int] = None, db: Session = Depends(get
 
 @app.post("/upload_audio", response_model=ChapterOut)
 async def upload_audio(
-    user_id: int,
-    title: str,
-    anchor_prompt: str | None = None,
-    segment_index: int = 0,
+    user_id: int = Form(...),
+    title: str = Form(...),
+    anchor_prompt: str | None = Form(None),
+    segment_index: int = Form(0),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
