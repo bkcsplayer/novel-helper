@@ -20,7 +20,24 @@
 
 ---
 
-<img src="https://raw.githubusercontent.com/bkcsplayer/novel-helper/main/.github/assets/hero-banner.png" alt="BioWeaver Hero" width="100%" />
+```
+╔══════════════════════════════════════════════════════════════════╗
+║                                                                  ║
+║     🎙️  "Tell me about your first patient, Doctor..."           ║
+║                                                                  ║
+║         📖 ──────────────────────────────── 📖                   ║
+║                                                                  ║
+║     🩺  The stethoscope was cold against my palm...              ║
+║         I remember the smell of antiseptic,                      ║
+║         the nervous flutter in my chest,                         ║
+║         and Mrs. Chen's gentle smile...                          ║
+║                                                                  ║
+║         📖 ──────────────────────────────── 📖                   ║
+║                                                                  ║
+║     ✨  Voice → AI → Beautiful Narrative                         ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+```
 
 *Designed for elderly storytellers who want to preserve their legacy*
 
@@ -249,10 +266,13 @@ curl -X POST http://localhost:18080/api/upload_audio \
 
 <div align="center">
 
-| Mobile Timeline | Recording Screen | Admin Dashboard |
+| 📱 Mobile Timeline | 🎙️ Recording Screen | 🖥️ Admin Dashboard |
 |:---------------:|:----------------:|:---------------:|
-| <img src="https://via.placeholder.com/250x500/F5F5F0/2C2C2C?text=Timeline" /> | <img src="https://via.placeholder.com/250x500/F5F5F0/D4A373?text=Record" /> | <img src="https://via.placeholder.com/250x500/2C2C2C/F5F5F0?text=Admin" /> |
-| *20 Memory Cards* | *One-Tap Recording* | *Full CRUD Control* |
+| 20 Memory Cards | One-Tap Recording | Full CRUD Control |
+| Vintage paper theme | Real-time waveform | React-Admin + MUI |
+| Smooth animations | Audio preview | System health monitor |
+
+**Live Demo:** https://novel.khtain.com/
 
 </div>
 
