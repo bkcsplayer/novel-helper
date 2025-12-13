@@ -7,5 +7,6 @@ export default defineConfig({
   server: {
     port: 4173,
     host: true,
+    allowedHosts: ["novel.khtain.com", "localhost", "127.0.0.1"],
   },
 });
