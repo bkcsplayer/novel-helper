@@ -85,6 +85,7 @@ class ChapterOut(BaseModel):
     audio_url: Optional[str] = None
     transcript_text: Optional[str] = None
     polished_text: Optional[str] = None
+    polished_by_model: Optional[str] = None  # Track which AI model was used
     status: str
     created_at: Optional[datetime] = None
 
@@ -170,11 +171,13 @@ async def upload_audio(
 
     transcript_text = None
     polished_text = None
+    polished_by_model = None
     try:
         transcript_text = await transcribe_file(stored_fs_path)
-        polished_text = await rewrite_memory(anchor_prompt or "", transcript_text, None)
+        polished_text, polished_by_model = await rewrite_memory(anchor_prompt or "", transcript_text, None)
         chapter.transcript_text = transcript_text
         chapter.polished_text = polished_text
+        chapter.polished_by_model = polished_by_model
         chapter.status = "polished"
         db.add(chapter)
         db.commit()
@@ -326,15 +329,16 @@ async def transcribe_and_polish(
 
     chapter.transcript_text = payload.transcript_text
     anchor = payload.anchor_prompt or chapter.anchor_prompt or ""
-    polished = await rewrite_memory(anchor, payload.transcript_text, payload.model)
+    polished, model_used = await rewrite_memory(anchor, payload.transcript_text, payload.model)
     chapter.polished_text = polished
+    chapter.polished_by_model = model_used
     chapter.status = "polished"
 
     db.add(chapter)
     db.commit()
     db.refresh(chapter)
 
-    send_telegram(f"Chapter polished: id {chapter_id}, title '{chapter.title}'")
+    send_telegram(f"Chapter polished: id {chapter_id}, title '{chapter.title}', model: {model_used}")
     return chapter
 
 

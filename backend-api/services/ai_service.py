@@ -9,7 +9,7 @@ Uses the "Slumdog Millionaire" montage narrative style:
 
 import os
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 
 import httpx
 from httpx import HTTPError
@@ -60,20 +60,28 @@ OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/ap
 OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "anthropic/claude-3-opus-20240229")
 
 
-async def rewrite_memory(anchor_prompt: str, transcript: str, model: Optional[str] = None) -> str:
+def get_current_model() -> str:
+    """Return the currently configured model name."""
+    return OPENROUTER_MODEL
+
+
+async def rewrite_memory(anchor_prompt: str, transcript: str, model: Optional[str] = None) -> Tuple[str, str]:
     """
     Call OpenRouter to polish the transcript in Slumdog montage style.
     Falls back to the original transcript on failure.
+    
+    Returns:
+        Tuple of (polished_text, model_used)
     """
     chosen_model = model or OPENROUTER_MODEL
 
     if not OPENROUTER_API_KEY:
         logger.warning("No OPENROUTER_API_KEY configured, returning raw transcript")
-        return transcript
+        return transcript, ""
 
     if not transcript or not transcript.strip():
         logger.warning("Empty transcript, nothing to polish")
-        return transcript
+        return transcript, ""
 
     # Build a more detailed user prompt
     user_prompt = f"""## Anchor Object
@@ -112,8 +120,8 @@ Please transform this raw spoken memory into a beautifully crafted biographical 
                 if resp.status_code == 200:
                     data = resp.json()
                     result = data["choices"][0]["message"]["content"]
-                    logger.info(f"Polish successful: {len(result)} chars")
-                    return result
+                    logger.info(f"Polish successful with {chosen_model}: {len(result)} chars")
+                    return result, chosen_model
                 else:
                     last_error = f"HTTP {resp.status_code}: {resp.text[:200]}"
                     logger.warning(f"Polish attempt {attempt+1} failed: {last_error}")
@@ -127,4 +135,4 @@ Please transform this raw spoken memory into a beautifully crafted biographical 
             break
 
     logger.error(f"Polish failed after retries: {last_error}")
-    return transcript
+    return transcript, ""

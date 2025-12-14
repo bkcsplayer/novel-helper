@@ -127,6 +127,7 @@ def seed_demo(db: Session) -> Dict:
                 audio_url=audio_url,
                 transcript_text=transcript,
                 polished_text=polished if status == "polished" else None,
+                polished_by_model="demo/seed-data" if status == "polished" else None,
                 status=status,
             )
             db.add(ch)

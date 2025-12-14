@@ -74,6 +74,35 @@ function StatusChip() {
   );
 }
 
+// Model field for list view - shows which AI model was used
+function ModelField() {
+  const record = useRecordContext();
+  if (!record?.polished_by_model) {
+    return (
+      <Typography variant="body2" sx={{ color: colors.text.muted, fontStyle: "italic", fontSize: "0.75rem" }}>
+        —
+      </Typography>
+    );
+  }
+
+  // Extract just the model name (e.g., "gpt-5.2" from "openai/gpt-5.2")
+  const modelName = record.polished_by_model.split("/").pop() || record.polished_by_model;
+
+  return (
+    <Chip
+      label={modelName}
+      size="small"
+      sx={{
+        bgcolor: alpha(colors.accent.gold, 0.12),
+        color: colors.accent.rust,
+        fontWeight: 600,
+        fontSize: "0.7rem",
+        height: 22,
+      }}
+    />
+  );
+}
+
 // Compact audio player for list view
 function CompactAudioPlayer() {
   const record = useRecordContext();
@@ -223,6 +252,7 @@ export function ChapterList() {
             <ChapterTitleField source="title" label="Chapter" />
             <TextField source="anchor_prompt" label="Anchor" />
             <StatusChip source="status" label="Status" />
+            <ModelField source="polished_by_model" label="AI Model" />
             <CompactAudioPlayer source="audio_url" label="Audio" />
             <DateField source="created_at" label="Created" showTime />
             <ShowButton />
@@ -283,6 +313,28 @@ function FullAudioPlayer() {
   );
 }
 
+// Model badge component
+function ModelBadge() {
+  const record = useRecordContext();
+  if (!record?.polished_by_model) return null;
+
+  return (
+    <Chip
+      icon={<AutoFixHighIcon sx={{ fontSize: 14 }} />}
+      label={record.polished_by_model}
+      size="small"
+      sx={{
+        bgcolor: alpha(colors.accent.gold, 0.15),
+        color: colors.accent.rust,
+        fontWeight: 600,
+        fontSize: "0.7rem",
+        height: 24,
+        "& .MuiChip-icon": { color: colors.accent.rust },
+      }}
+    />
+  );
+}
+
 // Text preview component
 function TextPreview({ source, label, isPolished }: { source: string; label: string; isPolished?: boolean }) {
   const record = useRecordContext();
@@ -293,20 +345,29 @@ function TextPreview({ source, label, isPolished }: { source: string; label: str
 
   return (
     <Box sx={{ mb: 3 }}>
-      <Typography
-        variant="subtitle2"
+      <Box
         sx={{
-          color: colors.text.secondary,
-          fontWeight: 600,
-          mb: 1,
           display: "flex",
           alignItems: "center",
-          gap: 1,
+          justifyContent: "space-between",
+          mb: 1,
         }}
       >
-        {isPolished ? <AutoFixHighIcon fontSize="small" /> : <ArticleIcon fontSize="small" />}
-        {label}
-      </Typography>
+        <Typography
+          variant="subtitle2"
+          sx={{
+            color: colors.text.secondary,
+            fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          {isPolished ? <AutoFixHighIcon fontSize="small" /> : <ArticleIcon fontSize="small" />}
+          {label}
+        </Typography>
+        {isPolished && <ModelBadge />}
+      </Box>
       <Box
         sx={{
           p: 3,

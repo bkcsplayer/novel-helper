@@ -28,6 +28,7 @@ class Chapter(Base):
     audio_url = Column(String(512), nullable=True)
     transcript_text = Column(Text, nullable=True)
     polished_text = Column(Text, nullable=True)
+    polished_by_model = Column(String(100), nullable=True)  # Track which AI model was used
     status = Column(String(50), default="pending", nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
 
