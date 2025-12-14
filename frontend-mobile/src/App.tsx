@@ -1,5 +1,165 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
+// 认证配置
+const AUTH_CONFIG = {
+  username: "ffthelper",
+  password: "1q2w3e4R.",
+  storageKey: "bioweaver_auth",
+};
+
+// 检查是否已登录
+function isAuthenticated(): boolean {
+  const token = localStorage.getItem(AUTH_CONFIG.storageKey);
+  return token === btoa(`${AUTH_CONFIG.username}:${AUTH_CONFIG.password}`);
+}
+
+// 登录
+function login(username: string, password: string): boolean {
+  if (username === AUTH_CONFIG.username && password === AUTH_CONFIG.password) {
+    localStorage.setItem(AUTH_CONFIG.storageKey, btoa(`${username}:${password}`));
+    return true;
+  }
+  return false;
+}
+
+// 登出
+function logout() {
+  localStorage.removeItem(AUTH_CONFIG.storageKey);
+}
+
+// 登录页面组件
+function LoginPage({ onLogin }: { onLogin: () => void }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    // 模拟延迟
+    setTimeout(() => {
+      if (login(username, password)) {
+        onLogin();
+      } else {
+        setError("用户名或密码错误");
+        setLoading(false);
+      }
+    }, 500);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F5F5F0] flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        {/* Logo 区域 */}
+        <div className="text-center mb-8">
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="inline-block mb-4"
+          >
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#D4A373] to-[#8B5A2B] rounded-2xl flex items-center justify-center shadow-lg">
+              <span className="text-4xl">🎭</span>
+            </div>
+          </motion.div>
+          <h1 className="text-3xl font-serif font-bold text-[#2C2C2C]">BioWeaver</h1>
+          <p className="text-[#6B6B6B] mt-2">编织你的人生故事</p>
+        </div>
+
+        {/* 登录卡片 */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white rounded-2xl shadow-xl p-8 border border-[#E8E4DF]"
+        >
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-[#2C2C2C] mb-2">
+                用户名
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-[#E8E4DF] bg-[#FAFAF8] focus:outline-none focus:ring-2 focus:ring-[#D4A373] focus:border-transparent transition-all"
+                placeholder="请输入用户名"
+                required
+                autoComplete="username"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#2C2C2C] mb-2">
+                密码
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-[#E8E4DF] bg-[#FAFAF8] focus:outline-none focus:ring-2 focus:ring-[#D4A373] focus:border-transparent transition-all"
+                placeholder="请输入密码"
+                required
+                autoComplete="current-password"
+              />
+            </div>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100"
+              >
+                ⚠️ {error}
+              </motion.div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 px-4 bg-gradient-to-r from-[#D4A373] to-[#8B5A2B] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  登录中...
+                </span>
+              ) : (
+                "登录"
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6 pt-6 border-t border-[#E8E4DF] text-center text-sm text-[#8B8B8B]">
+            <p>Memory Lane · 记录生命的足迹</p>
+          </div>
+        </motion.div>
+
+        {/* 底部装饰 */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center text-[#A0A0A0] text-xs mt-6"
+        >
+          © 2024 BioWeaver. All rights reserved.
+        </motion.p>
+      </motion.div>
+    </div>
+  );
+}
 
 type Chapter = {
   id: number;
@@ -50,7 +210,19 @@ function formatTime(seconds: number): string {
   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 
+// 主应用包装器 - 处理认证
 export default function App() {
+  const [authenticated, setAuthenticated] = useState(isAuthenticated());
+
+  if (!authenticated) {
+    return <LoginPage onLogin={() => setAuthenticated(true)} />;
+  }
+
+  return <MainApp onLogout={() => setAuthenticated(false)} />;
+}
+
+// 主应用内容
+function MainApp({ onLogout }: { onLogout: () => void }) {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +247,12 @@ export default function App() {
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+
+  // 登出处理
+  const handleLogout = () => {
+    logout();
+    onLogout();
+  };
 
   // 最大录音时间（20分钟 = 1200秒）
   const MAX_RECORDING_TIME = 1200;
@@ -299,7 +477,15 @@ export default function App() {
     <div className="min-h-screen bg-background text-text pb-48">
       <div className="max-w-2xl mx-auto px-4 pt-8 space-y-6">
         <header className="space-y-2">
-          <p className="text-sm uppercase tracking-[0.24em] text-slate-500">BioWeaver</p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm uppercase tracking-[0.24em] text-slate-500">BioWeaver</p>
+            <button
+              onClick={handleLogout}
+              className="text-xs px-3 py-1.5 rounded-full bg-[#F5F5F0] text-[#8B5A2B] hover:bg-[#E8E4DF] transition-colors border border-[#E6E1D8]"
+            >
+              退出 →
+            </button>
+          </div>
           <h1 className="font-serif text-3xl">Memory Lane</h1>
           <p className="text-sm text-slate-600">
             用声音记录您的人生故事，AI 将它们编织成优美的传记。
