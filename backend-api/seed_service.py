@@ -169,3 +169,46 @@ def seed_demo(db: Session) -> Dict:
     }
 
 
+def clear_demo(db: Session) -> Dict:
+    """
+    Remove all demo data (demo user + related chapters + books).
+    """
+    demo_email = "demo@bioweaver.local"
+    user = db.query(User).filter(User.email == demo_email).first()
+    
+    deleted_chapters = 0
+    deleted_books = 0
+    
+    if user:
+        # Delete chapters
+        deleted_chapters = db.query(Chapter).filter(Chapter.user_id == user.id).delete()
+        # Delete books
+        deleted_books = db.query(Book).filter(Book.user_id == user.id).delete()
+        # Delete user
+        db.delete(user)
+        db.commit()
+    
+    # Optionally clean up demo files
+    audio_dir = os.getenv("STORAGE_AUDIO_PATH", "/data/storage/audio")
+    demo_wav = os.path.join(audio_dir, "demo-silence.wav")
+    if os.path.exists(demo_wav):
+        try:
+            os.remove(demo_wav)
+        except:
+            pass
+    
+    books_dir = os.getenv("STORAGE_BOOK_PATH", "/data/storage/books")
+    demo_book = os.path.join(books_dir, "demo-book.txt")
+    if os.path.exists(demo_book):
+        try:
+            os.remove(demo_book)
+        except:
+            pass
+    
+    return {
+        "deleted_user": demo_email if user else None,
+        "deleted_chapters": deleted_chapters,
+        "deleted_books": deleted_books,
+    }
+
+

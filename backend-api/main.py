@@ -14,7 +14,7 @@ from services.ai_service import rewrite_memory
 from email_service import send_email
 from telegram_service import send_telegram
 from whisper_service import transcribe_file
-from seed_service import seed_demo
+from seed_service import seed_demo, clear_demo
 from health_service import collect_health
 
 # Create tables on startup
@@ -290,6 +290,15 @@ async def admin_seed_demo(request: Request, db: Session = Depends(get_db)):
     require_admin(request)
     result = seed_demo(db)
     send_telegram(f"Demo seeded: user {result['user']['email']}, chapters +{result['created_chapters']}, books +{result['created_books']}")
+    return result
+
+
+@app.post("/admin/clear_demo")
+async def admin_clear_demo(request: Request, db: Session = Depends(get_db)):
+    """Remove all demo data (demo user + related chapters + books)."""
+    require_admin(request)
+    result = clear_demo(db)
+    send_telegram(f"Demo cleared: {result['deleted_chapters']} chapters, {result['deleted_books']} books")
     return result
 
 

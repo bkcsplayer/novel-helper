@@ -260,6 +260,7 @@ export default function SystemStatus() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const notify = useNotify();
 
   const loadData = async () => {
@@ -309,6 +310,29 @@ export default function SystemStatus() {
     }
   };
 
+  const handleClearDemo = async () => {
+    if (!window.confirm("Are you sure you want to delete all demo data?\n\nThis will remove the demo user and all related chapters and books.")) {
+      return;
+    }
+    try {
+      setClearing(true);
+      const apiBase = getApiBase();
+      const res = await fetch(`${apiBase}/admin/clear_demo`, {
+        method: "POST",
+        headers: { ...getAdminHeaders(), "Content-Type": "application/json" },
+        body: "{}",
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const result = await res.json();
+      notify(`Demo data cleared! Deleted ${result.deleted_chapters} chapters, ${result.deleted_books} books. 🗑️`, { type: "success" });
+      loadData();
+    } catch (e: any) {
+      notify(e?.message || "Clear demo failed", { type: "error" });
+    } finally {
+      setClearing(false);
+    }
+  };
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1400, mx: "auto" }}>
       <Title title="Dashboard" />
@@ -347,7 +371,7 @@ export default function SystemStatus() {
           <Button
             variant="contained"
             onClick={handleSeedDemo}
-            disabled={seeding}
+            disabled={seeding || clearing}
             startIcon={seeding ? <CircularProgress size={18} color="inherit" /> : <AutoStoriesIcon />}
             sx={{
               bgcolor: colors.secondary.main,
@@ -356,6 +380,23 @@ export default function SystemStatus() {
             }}
           >
             {seeding ? "Seeding..." : "Seed Demo Data"}
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleClearDemo}
+            disabled={clearing || seeding}
+            startIcon={clearing ? <CircularProgress size={18} color="inherit" /> : <ErrorIcon />}
+            sx={{
+              borderColor: colors.status.error,
+              color: colors.status.error,
+              "&:hover": {
+                borderColor: colors.status.error,
+                bgcolor: alpha(colors.status.error, 0.08),
+              },
+              px: 3,
+            }}
+          >
+            {clearing ? "Clearing..." : "Clear Demo Data"}
           </Button>
         </Box>
       </Box>
