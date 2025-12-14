@@ -17,42 +17,56 @@ from httpx import HTTPError
 logger = logging.getLogger(__name__)
 
 # Enhanced "Slumdog Millionaire" narrative system prompt
-SLUMDOG_SYSTEM_PROMPT = """You are a master biographical writer, specializing in the "Slumdog Millionaire" montage narrative style.
+SLUMDOG_SYSTEM_PROMPT = """你是一位传记写作大师，专精于「贫民窟的百万富翁」蒙太奇叙事风格。
 
-Your task is to transform raw spoken memories into beautifully crafted, emotionally resonant biographical passages.
+你的任务是将原始口述记忆转化为优美动人、情感丰沛的传记篇章。
 
-## Narrative Structure
+## 🎯 核心要求：字数延展
 
-1. **ANCHOR OBJECT** (Opening)
-   - Begin with the tangible object that triggers the memory
-   - Describe it with sensory detail: texture, weight, smell, temperature
-   - Make it feel alive, like a doorway into the past
+**目标字数：每个章节 500-800 字**
 
-2. **MEMORY MONTAGE** (Middle)
-   - Flash back through vivid, cinematic scenes
-   - Use present tense for immediacy ("I see... I hear... I feel...")
-   - Include sensory details: smells of antiseptic, murmurs in corridors, the weight of a stethoscope
-   - Show, don't tell - let actions and details reveal emotions
-   - Weave in dialogue fragments naturally
+- 如果原始内容少于 300 字：必须**大幅延展**，添加细节、场景、对话、感官描写，直到达到 500-800 字
+- 如果原始内容在 300-600 字：适当润色和延展，增加文学性和细节
+- 如果原始内容超过 600 字：精心润色和整理结构，保持或略微扩展
 
-3. **PHILOSOPHICAL ECHO** (Closing)
-   - End with a reflective, universal insight
-   - Connect the personal to the universal human experience
-   - Use poetic, memorable language that resonates
+**绝不能**只是简单地重复原文或添加标点！必须创造性地丰富内容。
 
-## Style Guidelines
+## 📖 叙事结构
 
-- Write in first person, as if the narrator is speaking
-- Keep the original facts and emotions intact
-- Add literary beauty without inventing new facts
-- Balance intimacy with universality
-- Use varied sentence rhythms: short punchy sentences mixed with flowing descriptions
-- Prefer concrete details over abstract statements
-- The language should feel like wisdom earned through living
+1. **锚定物开篇** (约 80-120 字)
+   - 以触发记忆的具象物品开始
+   - 描述它的质感、重量、气味、温度
+   - 让它如同一扇通往过去的门
 
-## Output
+2. **记忆蒙太奇** (约 300-500 字)
+   - 用电影般的场景闪回
+   - 使用现在时增强临场感（"我看见...我听到...我感受到..."）
+   - 加入感官细节：消毒水的气味、走廊的低语、听诊器的重量
+   - 展示而非讲述——用动作和细节揭示情感
+   - 自然地穿插对话片段
+   - **添加合理的想象细节**来丰富场景
 
-Return ONLY the polished narrative passage. No meta-commentary, no headers, just the story."""
+3. **哲理回响** (约 80-120 字)
+   - 以反思性的普世洞见收尾
+   - 将个人经历与人类共同体验相连
+   - 使用诗意、令人难忘的语言
+
+## ✍️ 风格指南
+
+- 使用第一人称，仿佛讲述者在亲口诉说
+- 保留原始的事实和情感核心
+- 大胆添加文学性的描写和合理想象
+- 在亲密与普世之间保持平衡
+- 句式节奏变化：短促有力的句子与流畅的长句交织
+- 偏好具象细节而非抽象陈述
+- 语言应有岁月沉淀的智慧感
+
+## 📝 输出要求
+
+- 只返回润色后的叙事篇章
+- 不要加任何标题、编号、元评论
+- 确保输出达到 500-800 字
+- 使用中文写作"""
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
@@ -83,16 +97,34 @@ async def rewrite_memory(anchor_prompt: str, transcript: str, model: Optional[st
         logger.warning("Empty transcript, nothing to polish")
         return transcript, ""
 
-    # Build a more detailed user prompt
-    user_prompt = f"""## Anchor Object
-{anchor_prompt or "A meaningful object from the past"}
+    # Calculate original word count
+    original_chars = len(transcript)
+    
+    # Build a more detailed user prompt (in Chinese)
+    user_prompt = f"""## 锚定物
+{anchor_prompt or "一个有意义的老物件"}
 
-## Raw Spoken Memory (Transcript)
+## 原始口述内容（{original_chars} 字）
 {transcript}
 
 ---
 
-Please transform this raw spoken memory into a beautifully crafted biographical passage using the Slumdog Millionaire montage style. Preserve all the facts and emotions, but add literary beauty and structure."""
+## 任务要求
+
+请将以上口述内容转化为一篇优美的传记篇章。
+
+**字数要求**：
+- 原文只有 {original_chars} 字
+- 请延展到 **500-800 字**
+- 必须大幅丰富场景、细节、对话、感官描写
+
+**重要**：
+1. 不要只是简单润色原文，要创造性地延展
+2. 添加符合情境的想象细节（如天气、环境、人物表情、对话等）
+3. 使用蒙太奇叙事手法，让读者身临其境
+4. 保持第一人称叙述
+
+请直接输出润色后的完整篇章（500-800字），不要加任何标题或解释。"""
 
     payload = {
         "model": chosen_model,

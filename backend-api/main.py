@@ -463,15 +463,16 @@ async def polish_existing_transcript(
         raise HTTPException(status_code=400, detail="no transcript to polish")
 
     anchor = chapter.anchor_prompt or ""
-    polished = await rewrite_memory(anchor, chapter.transcript_text, model)
+    polished, model_used = await rewrite_memory(anchor, chapter.transcript_text, model)
     chapter.polished_text = polished
+    chapter.polished_by_model = model_used
     chapter.status = "polished"
 
     db.add(chapter)
     db.commit()
     db.refresh(chapter)
 
-    send_telegram(f"Chapter polished (existing): id {chapter_id}, title '{chapter.title}'")
+    send_telegram(f"Chapter re-polished: id {chapter_id}, title '{chapter.title}', model: {model_used}")
     return chapter
 
 
