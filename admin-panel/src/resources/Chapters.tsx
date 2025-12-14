@@ -306,9 +306,25 @@ function FullAudioPlayer() {
         <MicIcon fontSize="small" />
         Audio Recording
       </Typography>
-      <audio controls preload="none" style={{ width: "100%", borderRadius: 8 }}>
-        <source src={record.audio_url} />
-      </audio>
+      <Box sx={{ 
+        bgcolor: 'rgba(0,0,0,0.03)', 
+        borderRadius: 2, 
+        p: 1,
+        '& audio': { width: '100%', outline: 'none' }
+      }}>
+        <audio 
+          controls 
+          preload="metadata"
+          controlsList="nodownload"
+        >
+          <source src={record.audio_url} type="audio/webm" />
+          <source src={record.audio_url} type="audio/mpeg" />
+          <source src={record.audio_url} type="audio/wav" />
+        </audio>
+        <Typography variant="caption" sx={{ display: 'block', mt: 1, color: colors.text.muted, fontSize: '0.7rem' }}>
+          {record.audio_url?.split('/').pop()}
+        </Typography>
+      </Box>
     </Box>
   );
 }
